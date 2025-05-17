@@ -5,10 +5,10 @@ import { FC } from 'react';
 
 
 interface Props {
-  users: User[];
+	users: User[];
 }
 
-const UserTable: FC<Props> = ({ users }) => {
+const UserTable: FC<Props> = ({ users, highlightIds }) => {
 	return (
 		<table border={1} cellPadding={8}>
 			<thead>
@@ -20,7 +20,13 @@ const UserTable: FC<Props> = ({ users }) => {
 			</thead>
 			<tbody>
 				{users.map(user => (
-					<tr key={user.id}>
+					<tr
+						key={user.id}
+						style={{
+							backgroundColor:
+								highlightIds?.get(user.address.city) === user.id ? '#f9f871' : 'transparent'
+						}}
+					>
 						<td>{user.firstName} {user.lastName}</td>
 						<td>{user.address.city}</td>
 						<td>{new Date(user.birthDate).toLocaleDateString('de-DE')}</td>
@@ -30,5 +36,8 @@ const UserTable: FC<Props> = ({ users }) => {
 		</table>
 	);
 };
-
+interface Props {
+	users: User[];
+	highlightIds?: Map<string, number>;
+}
 export default UserTable;

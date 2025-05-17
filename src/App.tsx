@@ -10,6 +10,8 @@ function App() {
 	const [selectedCity, setSelectedCity] = useState('');
 	const uniqueCities = Array.from(new Set(users.map(user => user.address.city)));
 	const [loading, setLoading] = useState(true);
+	const [highlightOldest, setHighlightOldest] = useState(false);
+	const oldestUsersByCity = new Map<string, number>();
 	const filteredUsers = users
 		.filter(user =>
 			(user.firstName + ' ' + user.lastName).toLowerCase().includes(searchTerm.toLowerCase())
@@ -29,7 +31,19 @@ function App() {
 				setLoading(false);
 			});
 	}, []);
-
+	if (highlightOldest) {
+		filteredUsers.forEach(user => {
+			const currentOldest = oldestUsersByCity.get(user.address.city);
+			const userBirthTime = new Date(user.birthDate).getTime();
+	
+			if (
+				currentOldest === undefined ||
+				userBirthTime < new Date(users.find(u => u.id === currentOldest)!.birthDate).getTime()
+			) {
+				oldestUsersByCity.set(user.address.city, user.id);
+			}
+		});
+	}
 	if (loading) return <p>Loading users...</p>;
 	return (
 		<>
@@ -58,10 +72,19 @@ function App() {
 							<option key={city} value={city}>{city}</option>
 						))}
 					</select>
+					<label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+						<input
+							type="checkbox"
+							checked={highlightOldest}
+							onChange={(e) => setHighlightOldest(e.target.checked)}
+						/>
+  Highlight oldest user per city
+					</label>
 				</div>
 				<h1>Customer List</h1>
 				
-				<UserTable users={filteredUsers} />
+				<UserTable users={filteredUsers} highlightIds={highlightOldest ? oldestUsersByCity : undefined} />
+
 				
 			</div>
 		</>
