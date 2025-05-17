@@ -6,10 +6,11 @@ import UserTable from './components/UserTable';
 import { User } from './types/User';
 function App() {
 	const [users, setUsers] = useState<User[]>([]);
+	const [rawSearchTerm, setRawSearchTerm] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
+	const [loading, setLoading] = useState(true);
 	const [selectedCity, setSelectedCity] = useState('');
 	const uniqueCities = Array.from(new Set(users.map(user => user.address.city)));
-	const [loading, setLoading] = useState(true);
 	const [highlightOldest, setHighlightOldest] = useState(false);
 	const oldestUsersByCity = new Map<string, number>();
 	const filteredUsers = users
@@ -19,6 +20,14 @@ function App() {
 		.filter(user =>
 			selectedCity === '' || user.address.city === selectedCity
 		);
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setSearchTerm(rawSearchTerm);
+		}, 1000); // 1 second delay
+		
+		return () => clearTimeout(timeout); // Clear timeout if rawSearchTerm changes quickly
+	}, [rawSearchTerm]);
 	useEffect(() => {
 		fetch('https://dummyjson.com/users')
 			.then(res => res.json())
@@ -31,6 +40,8 @@ function App() {
 				setLoading(false);
 			});
 	}, []);
+
+	
 	if (highlightOldest) {
 		filteredUsers.forEach(user => {
 			const currentOldest = oldestUsersByCity.get(user.address.city);
@@ -57,8 +68,8 @@ function App() {
 					<input
 						type="text"
 						placeholder="Search by name..."
-						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
+						value={rawSearchTerm}
+						onChange={(e) => setRawSearchTerm(e.target.value)}
 						style={{ padding: '0.5rem', flex: 2 }}
 					/>
 
@@ -73,12 +84,13 @@ function App() {
 						))}
 					</select>
 					<label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+					Highlight oldest  per city
 						<input
 							type="checkbox"
 							checked={highlightOldest}
 							onChange={(e) => setHighlightOldest(e.target.checked)}
 						/>
-  Highlight oldest user per city
+
 					</label>
 				</div>
 				<h1>Customer List</h1>
