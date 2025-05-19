@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import UserTable from './components/UserTable';
 import { User } from './types/User';
 import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
+import SearchBar from './components/searchBar';
+
 function App() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [rawSearchTerm, setRawSearchTerm] = useState('');
@@ -51,37 +53,15 @@ function App() {
 				</a>
 			</div>
 			<div className="home-card">
-				<div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-					<input
-						type="text"
-						placeholder="Search by name..."
-						value={rawSearchTerm}
-						onChange={(e) => setRawSearchTerm(e.target.value)}
-						style={{ padding: '0.5rem', flex: 2 }}
-					/>
-
-					<select
-						value={selectedCity}
-						onChange={(e) => setSelectedCity(e.target.value)}
-						style={{ padding: '0.5rem', flex: 1 }}
-					>
-						<option value="">Select city</option>
-						{uniqueCities.map(city => (
-							<option key={city} value={city}>{city}</option>
-						))}
-					</select>
-					<label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-					Highlight oldest  per city
-						<input
-							type="checkbox"
-							checked={highlightOldest}
-							onChange={(e) => setHighlightOldest(e.target.checked)}
-						/>
-
-					</label>
-				</div>
-				<h1>Customer List</h1>
-				
+				<SearchBar
+					rawSearchTerm={rawSearchTerm}
+					setRawSearchTerm={setRawSearchTerm}
+					selectedCity={selectedCity}
+					setSelectedCity={setSelectedCity}
+					highlightOldest={highlightOldest}
+					setHighlightOldest={setHighlightOldest}
+					cities={uniqueCities}
+				/>				
 				<UserTable users={filteredUsers} highlightIds={oldestUsersByCity}/>
 
 				
