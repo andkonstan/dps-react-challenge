@@ -39,7 +39,7 @@ function App() {
 	}, []);
 
 	
-	if (loading) return <p>Loading users...</p>;
+
 	return (
 		<>
 			<div>
@@ -48,18 +48,25 @@ function App() {
 				</a>
 			</div>
 			<div className="home-card">
-				<SearchBar
-					rawSearchTerm={rawSearchTerm}
-					setRawSearchTerm={setRawSearchTerm}
-					selectedCity={selectedCity}
-					setSelectedCity={setSelectedCity}
-					highlightOldest={highlightOldest}
-					setHighlightOldest={setHighlightOldest}
-					cities={uniqueCities}
-				/>				
-				<UserTable users={filteredUsers} highlightIds={oldestUsersByCity}/>
-
-				
+				{loading ? (
+					<p>Loading users...</p>
+				) : (
+					<>
+						<SearchBar
+							rawSearchTerm={rawSearchTerm}
+							setRawSearchTerm={setRawSearchTerm}
+							selectedCity={selectedCity}
+							setSelectedCity={setSelectedCity}
+							highlightOldest={highlightOldest}
+							setHighlightOldest={setHighlightOldest}
+							cities={uniqueCities}
+						/>
+						<UserTable
+							users={filteredUsers}
+							highlightIds={oldestUsersByCity}
+						/>
+					</>
+				)}
 			</div>
 		</>
 	);
