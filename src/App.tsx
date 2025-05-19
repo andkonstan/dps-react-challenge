@@ -4,6 +4,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import UserTable from './components/UserTable';
 import { User } from './types/User';
+import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
 function App() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [rawSearchTerm, setRawSearchTerm] = useState('');
@@ -12,14 +13,13 @@ function App() {
 	const [selectedCity, setSelectedCity] = useState('');
 	const uniqueCities = Array.from(new Set(users.map(user => user.address.city)));
 	const [highlightOldest, setHighlightOldest] = useState(false);
-	const oldestUsersByCity = new Map<string, number>();
-	const filteredUsers = users
-		.filter(user =>
-			(user.firstName + ' ' + user.lastName).toLowerCase().includes(searchTerm.toLowerCase())
-		)
-		.filter(user =>
-			selectedCity === '' || user.address.city === selectedCity
-		);
+	const filteredUsers = filterByCity(
+		filterByName(users, searchTerm),
+		selectedCity
+	);
+	const oldestUsersByCity = highlightOldest
+		? getOldestUsersByCity(filteredUsers)
+		: undefined;
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
@@ -42,19 +42,6 @@ function App() {
 	}, []);
 
 	
-	if (highlightOldest) {
-		filteredUsers.forEach(user => {
-			const currentOldest = oldestUsersByCity.get(user.address.city);
-			const userBirthTime = new Date(user.birthDate).getTime();
-	
-			if (
-				currentOldest === undefined ||
-				userBirthTime < new Date(users.find(u => u.id === currentOldest)!.birthDate).getTime()
-			) {
-				oldestUsersByCity.set(user.address.city, user.id);
-			}
-		});
-	}
 	if (loading) return <p>Loading users...</p>;
 	return (
 		<>
@@ -95,7 +82,7 @@ function App() {
 				</div>
 				<h1>Customer List</h1>
 				
-				<UserTable users={filteredUsers} highlightIds={highlightOldest ? oldestUsersByCity : undefined} />
+				<UserTable users={filteredUsers} highlightIds={oldestUsersByCity}/>
 
 				
 			</div>
