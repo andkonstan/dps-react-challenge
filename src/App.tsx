@@ -8,7 +8,6 @@ import './App.css';
 import UserTable from './components/UserTable';
 import SearchBar from './components/searchBar';
 
-import { User } from './types/User';
 
 import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
 

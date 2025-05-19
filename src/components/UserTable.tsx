@@ -1,7 +1,6 @@
-// src/components/UserTable.tsx
 import { User } from '../types/User';
 import { FC } from 'react';
-
+import './UserTable.css';
 
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 
 const UserTable: FC<Props> = ({ users, highlightIds }) => {
 	return (
-		<table border={1} cellPadding={8}>
+		<table className="user-table">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -19,19 +18,22 @@ const UserTable: FC<Props> = ({ users, highlightIds }) => {
 				</tr>
 			</thead>
 			<tbody>
-				{users.map(user => (
-					<tr
-						key={user.id}
-						style={{
-							backgroundColor:
-								highlightIds?.get(user.address.city) === user.id ? '#4b5563' : 'transparent'
-						}}
-					>
-						<td>{user.firstName} {user.lastName}</td>
-						<td>{user.address.city}</td>
-						<td>{new Date(user.birthDate).toLocaleDateString('de-DE')}</td>
-					</tr>
-				))}
+				{users.map(user => {
+					const isHighlighted = highlightIds?.get(user.address.city) === user.id;
+					return (
+						<tr
+							key={user.id}
+							style={{
+								backgroundColor: isHighlighted ? '#4b5563' : 'transparent',
+								fontWeight: isHighlighted ? 'bold' : 'normal'
+							}}
+						>
+							<td>{user.firstName} {user.lastName}</td>
+							<td>{user.address.city}</td>
+							<td>{new Date(user.birthDate).toLocaleDateString('de-DE')}</td>
+						</tr>
+					);
+				})}
 			</tbody>
 		</table>
 	);
