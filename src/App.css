@@ -4,7 +4,12 @@
 	padding: 2rem;
 	text-align: center;
 }
-
+body {
+  background-color: #c3cde2; 
+  color: white;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
 .logo {
 	height: 6em;
 	padding: 1.5em;
@@ -40,7 +45,7 @@
 .home-card {
 	display: flex;
 	flex-direction: column;
-	background-color: #1f2937; 
+	background-color: #495668; 
 	gap: 1.5rem;
 	padding: 2rem;
   border-radius: 12px;
