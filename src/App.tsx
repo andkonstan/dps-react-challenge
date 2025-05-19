@@ -6,11 +6,12 @@ import UserTable from './components/UserTable';
 import { User } from './types/User';
 import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
 import SearchBar from './components/searchBar';
+import { useDebouncedValue } from './hooks/useDebouncedValue';
 
 function App() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [rawSearchTerm, setRawSearchTerm] = useState('');
-	const [searchTerm, setSearchTerm] = useState('');
+	const searchTerm = useDebouncedValue(rawSearchTerm, 1000);
 	const [loading, setLoading] = useState(true);
 	const [selectedCity, setSelectedCity] = useState('');
 	const uniqueCities = Array.from(new Set(users.map(user => user.address.city)));
@@ -23,13 +24,7 @@ function App() {
 		? getOldestUsersByCity(filteredUsers)
 		: undefined;
 
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			setSearchTerm(rawSearchTerm);
-		}, 1000); // 1 second delay
-		
-		return () => clearTimeout(timeout); // Clear timeout if rawSearchTerm changes quickly
-	}, [rawSearchTerm]);
+
 	useEffect(() => {
 		fetch('https://dummyjson.com/users')
 			.then(res => res.json())

@@ -24,7 +24,7 @@ const UserTable: FC<Props> = ({ users, highlightIds }) => {
 						key={user.id}
 						style={{
 							backgroundColor:
-								highlightIds?.get(user.address.city) === user.id ? '#f9f871' : 'transparent'
+								highlightIds?.get(user.address.city) === user.id ? '#4b5563' : 'transparent'
 						}}
 					>
 						<td>{user.firstName} {user.lastName}</td>
