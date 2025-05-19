@@ -1,21 +1,32 @@
 
-import dpsLogo from './assets/DPS.svg';
-import './App.css';
 import { useEffect, useState } from 'react';
+
+import dpsLogo from './assets/DPS.svg';
+
+import './App.css';
+
 import UserTable from './components/UserTable';
-import { User } from './types/User';
-import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
 import SearchBar from './components/searchBar';
+
+import { User } from './types/User';
+
+import { filterByName, filterByCity, getOldestUsersByCity} from './utils/filters';
+
 import { useDebouncedValue } from './hooks/useDebouncedValue';
+import { useUsers } from './hooks/useUsers';
 
 function App() {
-	const [users, setUsers] = useState<User[]>([]);
+
+	const { users, loading } = useUsers();
 	const [rawSearchTerm, setRawSearchTerm] = useState('');
 	const searchTerm = useDebouncedValue(rawSearchTerm, 1000);
-	const [loading, setLoading] = useState(true);
 	const [selectedCity, setSelectedCity] = useState('');
-	const uniqueCities = Array.from(new Set(users.map(user => user.address.city)));
 	const [highlightOldest, setHighlightOldest] = useState(false);
+
+	const uniqueCities = Array.from(
+		new Set(users.map(user => user.address.city))
+	);
+	
 	const filteredUsers = filterByCity(
 		filterByName(users, searchTerm),
 		selectedCity
@@ -23,22 +34,6 @@ function App() {
 	const oldestUsersByCity = highlightOldest
 		? getOldestUsersByCity(filteredUsers)
 		: undefined;
-
-
-	useEffect(() => {
-		fetch('https://dummyjson.com/users')
-			.then(res => res.json())
-			.then(data => {
-				setUsers(data.users);
-				setLoading(false);
-			})
-			.catch(error => {
-				console.error('Failed to fetch users:', error);
-				setLoading(false);
-			});
-	}, []);
-
-	
 
 	return (
 		<>
